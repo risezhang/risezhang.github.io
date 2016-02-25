@@ -11,7 +11,7 @@ email: risezhang@gmail.com
 description: > # this means to ignore newlines until "baseurl:"
   想到神马写神马
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "http://blog.risezhang.com" # the base hostname & protocol for your site
+url: "http://risezhang.com" # the base hostname & protocol for your site
 twitter_username: risezhang
 github_username:  risezhang
 
