@@ -76,6 +76,7 @@
            ,"memory max: " + info.memory.max
            ,"disk free: " + info.diskData.free
            ,"disk total: " + info.diskData.total
+           ,"db status: " + info.database
          ], function(e){
             return $('<li/>').text(e)
          });
@@ -128,7 +129,7 @@
             // display information
             block.appendTo($('#serverList'))
             $.ajax({
-                url: info.url +'/status/status',
+                url: info.url +'/health/status',
                 dataType: "jsonp",
                 jsonp: "callback",
                 success: function (data) {
@@ -136,6 +137,7 @@
                     alink.removeClass().addClass("btn btn-success")
                 },
                 error: function () {
+                    alert('failed')
                     alink.removeClass().addClass("btn btn-danger")
                     $('div', block).text("failed!")
                 }
