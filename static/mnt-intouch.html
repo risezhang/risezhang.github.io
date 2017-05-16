@@ -1,0 +1,132 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<!-- Meta, title, CSS, favicons, etc. -->
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+		<title>
+		MK Monitor 
+		</title>
+
+
+		<!-- 新 Bootstrap 核心 CSS 文件 -->
+		<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+		<!-- 可选的Bootstrap主题文件（一般不用引入） -->
+		<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+	
+<style>
+      div#nav {
+
+      }
+
+      @media screen and (min-width: 800px) {
+        div#nav {
+          background-color: white;
+          z-index: 999;
+          position: fixed; 
+          top: 0px
+        }
+      }
+      
+      div#nav a {
+        margin: 10px;
+      }
+    </style>
+	</head>
+	<body>
+    <div role="main" id="nav">
+          
+    </div>
+
+    <br/><br/>
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12" role="main" id="serverList">
+					
+				</div>
+
+				<div class="col-md-3" role="complementary">
+					<nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix">
+						<ul class="nav bs-docs-sidenav" id="nav">
+							
+						</ul>
+					</nav>
+				</div>
+			</div>
+		</div>
+
+		<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+		<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+
+		<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+		<script src="http://cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+		<script>
+      function getInfo(info) {
+        return $.map([
+            "host name: " + info.hostname
+           ,"ip: " + info.ip
+           ,"cpu: " + info.processors
+           ,"boot time: " + info.startTime
+           ,"up time: " + info.upTime
+           ,"memory total: " + info.memory.total
+           ,"memory max: " + info.memory.max
+           ,"disk free: " + info.diskData.free
+           ,"disk total: " + info.diskData.total
+           ,"db status: " + info.database
+         ], function(e){
+            return $('<li/>').text(e)
+         });
+      }
+
+      var sites = ['10.196.72.202', '10.196.89.46', '10.196.89.129', '10.196.89.130', '10.196.89.131']
+      var ports = ['9001', '9002', '9003']
+      var apps = []
+      $(sites).each(function() {
+        var site = this;
+        $(ports).each(function() {
+          var port = this;
+          var addr = site + ":" + port;
+          apps.push({
+            name: addr,
+            url: "http://" + addr
+          })
+        })
+      })
+
+			$(function(){
+				$(apps).each(function() {
+            var info = this
+            var block = $('<div><h2><a name="tools"></a></h2><div>Fetching status</div></div>')
+            var name = info.name.replace(/\s/g, "_")
+            // anchor
+            var anchorName = info.name.replace(/\s/g, "_")
+            $('a', block).text(info.name).attr('name', anchorName)
+            var alink = $('<a class="btn btn-info">').text(info.name).attr('href', '#'+anchorName)
+            $('div#nav').append(alink);
+
+            // display information
+            block.appendTo($('#serverList'))
+            $.ajax({
+                url: info.url +'/health/status',
+                dataType: "jsonp",
+                jsonp: "callback",
+                success: function (data) {
+                    $('div', block).text("").append($('<ul/>').append(getInfo(data)))
+                    alink.removeClass().addClass("btn btn-success")
+                },
+                fail: function () {
+                    alert('failed')
+                    alink.removeClass().addClass("btn btn-danger")
+                    $('div', block).text("failed!")
+                }
+            })
+          })
+			})
+		</script>
+	</body> 
+</html>
+
